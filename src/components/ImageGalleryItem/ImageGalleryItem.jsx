@@ -1,7 +1,6 @@
 
-export default function ImageGaleryItem() {
-    return  <li class="gallery-item">
-                <img src="" alt="" />
+export default function ImageGaleryItem({ imageURL, imageTitle }) {
+    return  <li className="gallery-item">
+                <img src={imageURL} alt={imageTitle} />
             </li>
 }
-
