@@ -1,3 +1,4 @@
+import './ImageGalleryItem.css';
 
 export default function ImageGaleryItem({ imageURL, imageTitle }) {
     return  <li className="gallery-item">

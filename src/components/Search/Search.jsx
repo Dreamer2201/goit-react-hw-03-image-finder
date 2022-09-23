@@ -1,5 +1,7 @@
+import './Search.css';
 import { Component } from 'react';
 import { toast } from 'react-toastify';
+
 
 export default class Search extends Component {
     state = {

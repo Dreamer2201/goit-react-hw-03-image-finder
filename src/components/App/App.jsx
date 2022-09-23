@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
+import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Search from '../Search/Search';
@@ -18,9 +19,10 @@ class App extends Component {
 }
   render() {
     return (
-      <div>
+      <div className="App">
         <Search onSubmit={this.handleSubmitSearchForm} />
         <ImageGallery searchName={this.state.searchName} />
+        <Modal />
         <ToastContainer autoClose={4000} />
       </div>
   );
