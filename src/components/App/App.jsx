@@ -10,19 +10,26 @@ import Modal from '../Modal/Modal';
 
 class App extends Component {
   state = {
-    searchName:'',
+    searchName: '',
+    showModal: false,
   }
   
   handleSubmitSearchForm = searchName => {
     console.log(searchName);
   this.setState({ searchName });
-}
+  }
+  toggleModal = () => {
+    this.setState(state => ({
+      showModal: !state.showModal,
+    }))
+  }
   render() {
     return (
       <div className="App">
         <Search onSubmit={this.handleSubmitSearchForm} />
         <ImageGallery searchName={this.state.searchName} />
-        <Modal />
+        <button type="button" onClick={this.toggleModal}>Open Modal</button>
+        {this.state.showModal && <Modal />}
         <ToastContainer autoClose={4000} />
       </div>
   );
