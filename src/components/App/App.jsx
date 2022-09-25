@@ -4,7 +4,7 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Search from '../Search/Search';
-import FetchRequest from 'Fetch/FetchApi';
+
 import ImageGallery from '../ImageGallery/ImageGallery';
 
 
@@ -25,28 +25,7 @@ class App extends Component {
   this.setState({ searchName });
   }
 
-  async fetchImages() {
-    this.setState({
-      loading: true,
-    })
-    try {
-      const results = await FetchRequest(this.state.searchName, this.state.page);
-      this.setState(({ images }) => {
-        return {
-          images: [...images, ...results.hits]
-        }
-      })
-    } catch (error) {
-      this.setState({
-        error
-      })
-    } finally {
-      this.setState({
-        loading: false,
-      })
-    }
-  }
-
+ 
   
   render() {
     return (
