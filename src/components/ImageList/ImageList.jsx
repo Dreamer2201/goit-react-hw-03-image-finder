@@ -1,4 +1,4 @@
-import '../ImageGallery/ImageGallery.css';
+import '../ImageList/ImageList.css';
 import ImageGaleryItem from '../ImageGalleryItem/ImageGalleryItem';
 
 

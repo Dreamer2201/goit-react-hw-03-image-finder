@@ -1,16 +1,7 @@
 import { Component } from 'react';
-import './ImageGallery.css';
-// import { instance } from '../Modal/Modal';
-// import * as basicLightbox from 'basiclightbox';
-
 import ImageList from '../ImageList/ImageList';
 import fetchRequest from 'Fetch/FetchApi';
 import Modal from '../Modal/Modal';
- 
-// console.log(instance);
-// const instance = basicLightbox.create(`
-//     <img src="https://pixabay.com/get/g6ec1f025ff86713adf06cdac1b6b10950a9cbebc8fd5ef57cf0120c04f624032fb6cef311f62944607d0d85e3292c4ea086ffa6600e078d4d08176212435851b_1280.jpg" width="200" height=200">
-// `)
 
 export default class ImageGallery extends Component {
     state = {
@@ -36,7 +27,7 @@ export default class ImageGallery extends Component {
                     return {
                         images: [...images, ...items]
                     }
-                })
+                });
             } catch (error) {
                 this.setState({
                     error
@@ -47,21 +38,34 @@ export default class ImageGallery extends Component {
                 })
             }
 }
-        
+           
     componentDidUpdate(prevProps, prevState) {
         console.log(this.props.searchName);
-        if ((this.props.searchName && prevProps.searchName !== this.props.searchName) || this.state.page > prevState.page) {
+        if ((this.props.searchName && prevProps.searchName !== this.props.searchName)) {
+            this.setState({
+            images: [],
+            page: 1,
+        })
+            console.log(this.state.page);
+            this.fetchImages(this.props.searchName, 1);
+            console.log(this.state.images);
+        } if ((prevProps.searchName === this.props.searchName) && this.state.page > prevState.page) {
             this.fetchImages(this.props.searchName, this.state.page);
-        }
-
+            console.log(this.state.images);
+        } 
     }  
 
+    resetPrevQuery = () => {
+        this.setState({
+            images: [],
+            page: 1
+        })
+    }
     openModal = (contentModal) => {
         this.setState({
             showModal: true,
             contentModal,
         });
-        // instance.show();
         console.log(contentModal);
   
     }
@@ -74,7 +78,6 @@ export default class ImageGallery extends Component {
                 title: '',
             }
         });
-        // instance.close();
     }
 
     loadMore = () => {
@@ -95,7 +98,6 @@ export default class ImageGallery extends Component {
                 {!this.props.searchName && <p>Please enter your request</p>}
                 {this.state.images && <ImageList items={ this.state.images } onClick={this.openModal}></ImageList>}
                 {isImages && <button type="button" onClick={this.loadMore}>Load more...</button>}
-               
                 {this.state.showModal && <Modal onClose={this.closeModal} content={this.state.contentModal} />}
         </div>
     ) 
