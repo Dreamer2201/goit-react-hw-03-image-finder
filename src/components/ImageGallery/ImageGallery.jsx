@@ -1,10 +1,17 @@
 import { Component } from 'react';
-import './ImageGallery.css'
+import './ImageGallery.css';
+// import { instance } from '../Modal/Modal';
+// import * as basicLightbox from 'basiclightbox';
 
 import ImageList from '../ImageList/ImageList';
-import FetchRequest from 'Fetch/FetchApi';
+import fetchRequest from 'Fetch/FetchApi';
 import Modal from '../Modal/Modal';
-    
+ 
+// console.log(instance);
+// const instance = basicLightbox.create(`
+//     <img src="https://pixabay.com/get/g6ec1f025ff86713adf06cdac1b6b10950a9cbebc8fd5ef57cf0120c04f624032fb6cef311f62944607d0d85e3292c4ea086ffa6600e078d4d08176212435851b_1280.jpg" width="200" height=200">
+// `)
+
 export default class ImageGallery extends Component {
     state = {
         images: [],
@@ -17,29 +24,44 @@ export default class ImageGallery extends Component {
             title: '',
         }
     }
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.searchName !== this.props.searchName || this.state.page > prevState.page) {
-            const { searchName } = this.props;
-            this.setState({ loading: true });
 
-            FetchRequest(searchName, this.state.page)
-                .then(data => {
-                    const images = data.hits;
-                    console.log(data);
-                    console.log(images);
-                    this.setState({ images });
-                    return images;
+    async fetchImages() {
+            this.setState({
+                loading: true,
+            })
+            try {
+                const result = await fetchRequest(this.props.searchName, this.state.page);
+                const items = result.hits;
+                this.setState(({ images }) => {
+                    return {
+                        images: [...images, ...items]
+                    }
                 })
-                .catch(error => this.setState({ error }))
-                .finally(() =>  this.setState({ loading: false }))
+            } catch (error) {
+                this.setState({
+                    error
+                })
+            } finally {
+                this.setState({
+                    loading: false,
+                })
+            }
+}
+        
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.props.searchName);
+        if ((this.props.searchName && prevProps.searchName !== this.props.searchName) || this.state.page > prevState.page) {
+            this.fetchImages(this.props.searchName, this.state.page);
         }
-    }
-    
+
+    }  
+
     openModal = (contentModal) => {
         this.setState({
             showModal: true,
             contentModal,
         });
+        // instance.show();
         console.log(contentModal);
   
     }
@@ -51,7 +73,8 @@ export default class ImageGallery extends Component {
                 urlLarge: '',
                 title: '',
             }
-        })
+        });
+        // instance.close();
     }
 
     loadMore = () => {
@@ -72,10 +95,8 @@ export default class ImageGallery extends Component {
                 {!this.props.searchName && <p>Please enter your request</p>}
                 {this.state.images && <ImageList items={ this.state.images } onClick={this.openModal}></ImageList>}
                 {isImages && <button type="button" onClick={this.loadMore}>Load more...</button>}
-                {this.state.showModal && <Modal onClose={this.closeModal} content={this.state.contentModal}>
-                <img src={this.state.contentModal.urlLarge} alt={this.state.contentModal.title} />
-                </Modal>}
-                
+               
+                {this.state.showModal && <Modal onClose={this.closeModal} content={this.state.contentModal} />}
         </div>
     ) 
     }
