@@ -11,7 +11,6 @@ class App extends Component {
   }
   
   handleSubmitSearchForm = searchName => {
-    console.log(searchName);
   this.setState({ searchName });
   }
  

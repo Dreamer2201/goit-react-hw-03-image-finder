@@ -23,11 +23,20 @@ export default class ImageGallery extends Component {
             try {
                 const result = await fetchRequest(this.props.searchName, this.state.page);
                 const items = result.hits;
-                this.setState(({ images }) => {
+                if (this.state.page === 1) {
+                    this.setState(() => {
+                    return {
+                        images: [...items]
+                    }
+                });
+                } else {
+                    this.setState(({ images }) => {
                     return {
                         images: [...images, ...items]
                     }
                 });
+                }
+                
             } catch (error) {
                 this.setState({
                     error
@@ -37,39 +46,36 @@ export default class ImageGallery extends Component {
                     loading: false,
                 })
             }
-}
-           
-    componentDidUpdate(prevProps, prevState) {
+}          
+    componentDidUpdate(prevProps, prevState) {  
+        console.log(prevProps.searchName);
         console.log(this.props.searchName);
-        if ((this.props.searchName && prevProps.searchName !== this.props.searchName)) {
-            this.setState({
-            images: [],
-            page: 1,
-        })
-            console.log(this.state.page);
-            this.fetchImages(this.props.searchName, 1);
-            console.log(this.state.images);
-        } if ((prevProps.searchName === this.props.searchName) && this.state.page > prevState.page) {
-            this.fetchImages(this.props.searchName, this.state.page);
-            console.log(this.state.images);
-        } 
-    }  
+        console.log(prevState.page);
+        console.log(this.state.page);
 
-    resetPrevQuery = () => {
-        this.setState({
-            images: [],
-            page: 1
-        })
-    }
+        if(this.state.page > prevState.page ) {
+           this.fetchImages(this.props.searchName, this.state.page);
+            console.log(prevState.page);
+            console.log(this.state.page);
+            return;
+        } 
+        if (this.props.searchName && prevProps.searchName !== this.props.searchName) {
+            this.setState({
+                page: 1,
+                images: [],
+            });
+            console.log(this.state.page);
+            this.fetchImages(this.props.searchName, this.state.page);
+            return;
+        }
+
+    }  
     openModal = (contentModal) => {
         this.setState({
             showModal: true,
             contentModal,
         });
-        console.log(contentModal);
-  
     }
-
     closeModal = () => {
         this.setState({
             showModal: false,
@@ -79,7 +85,6 @@ export default class ImageGallery extends Component {
             }
         });
     }
-
     loadMore = () => {
         this.setState(({ page }) => {
             return {
@@ -87,8 +92,7 @@ export default class ImageGallery extends Component {
             }
         });
         console.log(this.state.page);
-    }
-    
+    }   
     render() {
         const isImages = Boolean(this.state.images.length);
         return (
@@ -96,7 +100,7 @@ export default class ImageGallery extends Component {
                 {this.state.images === [] && <div>Any images not found</div>}
                 {this.state.loading && <div>Loading...</div>}
                 {!this.props.searchName && <p>Please enter your request</p>}
-                {this.state.images && <ImageList items={ this.state.images } onClick={this.openModal}></ImageList>}
+                {this.state.images && <ImageList items={ this.state.images } onClick={this.openModal} />}
                 {isImages && <button type="button" onClick={this.loadMore}>Load more...</button>}
                 {this.state.showModal && <Modal onClose={this.closeModal} content={this.state.contentModal} />}
         </div>
