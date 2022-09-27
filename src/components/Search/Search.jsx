@@ -17,7 +17,7 @@ export default class Search extends Component {
     hendleSubmitSearchForm = (e) => {
         e.preventDefault();
         if (this.state.searchName.trim() === '') {
-            toast.warn("Enter any images name, please!");
+            toast.warn("Enter your request, please!");
         }
         this.props.onSubmit(this.state.searchName);
         this.setState({
