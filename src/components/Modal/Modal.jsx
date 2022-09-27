@@ -20,7 +20,6 @@ export default class Modal extends Component {
 
     render() {
       const { imageUrlLarge, imageTitle } = this.props.content;
-      console.log(imageTitle);
       return createPortal(
       <div className="overlay" onClick={this.closeModal}>
                 <div className="modal">

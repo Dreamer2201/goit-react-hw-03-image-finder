@@ -1,6 +1,8 @@
 import { Component } from 'react';
+import '../Search/Search.css';
 import ImageList from '../ImageList/ImageList';
 import fetchRequest from 'Fetch/FetchApi';
+import { Dna } from  'react-loader-spinner'
 import Modal from '../Modal/Modal';
 
 export default class ImageGallery extends Component {
@@ -15,62 +17,51 @@ export default class ImageGallery extends Component {
             title: '',
         }
     }
-
-    async fetchImages() {
-            this.setState({
-                loading: true,
-            })
-            try {
-                const result = await fetchRequest(this.props.searchName, this.state.page);
-                const items = result.hits;
-                if (this.state.page === 1) {
-                    this.setState(() => {
+    async fetchImages(currentName, currentPage) {
+        this.setState({
+            loading: true,
+        })
+        try {
+            const result = await fetchRequest(currentName, currentPage);
+            const items = result.hits;
+            if (currentPage === 1) {
+                this.setState(() => {
                     return {
                         images: [...items]
                     }
                 });
-                } else {
-                    this.setState(({ images }) => {
+            } else {
+                this.setState(({ images }) => {
                     return {
                         images: [...images, ...items]
                     }
                 });
-                }
-                
-            } catch (error) {
-                this.setState({
-                    error
-                })
-            } finally {
-                this.setState({
-                    loading: false,
-                })
             }
-}          
-    componentDidUpdate(prevProps, prevState) {  
-        console.log(prevProps.searchName);
-        console.log(this.props.searchName);
-        console.log(prevState.page);
-        console.log(this.state.page);
-
-        if(this.state.page > prevState.page ) {
-           this.fetchImages(this.props.searchName, this.state.page);
-            console.log(prevState.page);
-            console.log(this.state.page);
-            return;
-        } 
-        if (this.props.searchName && prevProps.searchName !== this.props.searchName) {
+        } catch (error) {
             this.setState({
-                page: 1,
-                images: [],
-            });
-            console.log(this.state.page);
+                error,
+            })
+        } finally {
+            this.setState({
+                loading: false,
+            })
+        }
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.page > prevState.page) {
             this.fetchImages(this.props.searchName, this.state.page);
             return;
         }
-
-    }  
+        if ((prevProps.searchName !== this.props.searchName) && this.state.page === prevState.page) {
+            this.fetchImages(this.props.searchName, 1);
+            this.setState({
+                page: 1,
+            })
+            return;
+        }
+    }
     openModal = (contentModal) => {
+
         this.setState({
             showModal: true,
             contentModal,
@@ -91,20 +82,26 @@ export default class ImageGallery extends Component {
                 page: page + 1
             }
         });
-        console.log(this.state.page);
-    }   
+    }
     render() {
         const isImages = Boolean(this.state.images.length);
         return (
             <div>
-                {this.state.images === [] && <div>Any images not found</div>}
-                {this.state.loading && <div>Loading...</div>}
+                {!isImages && <div>Any images not found</div>}
+                {this.state.loading && <Dna
+                                        visible={true}
+                                        height="80"
+                                        width="80"
+                                        ariaLabel="dna-loading"
+                                        wrapperStyle={{}}
+                                        wrapperClass="dna-wrapper"
+                                        />}
                 {!this.props.searchName && <p>Please enter your request</p>}
-                {this.state.images && <ImageList items={ this.state.images } onClick={this.openModal} />}
-                {isImages && <button type="button" onClick={this.loadMore}>Load more...</button>}
+                {this.state.images && <ImageList items={this.state.images} onClick={this.openModal} />}
+                {isImages && <button type="button" className="button" onClick={this.loadMore}>Load more...</button>}
                 {this.state.showModal && <Modal onClose={this.closeModal} content={this.state.contentModal} />}
-        </div>
-    ) 
+            </div>
+        )
     }
-    
+
 }
