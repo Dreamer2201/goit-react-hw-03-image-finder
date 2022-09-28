@@ -94,7 +94,10 @@ export default class ImageGallery extends Component {
         const { loading, error, images, showModal } = this.state;
         const isImages = Boolean(images.length);
         return (
-            <div>
+            <div>              
+                {error && <p className="notification">Try later, please.</p>}
+                {images && <ImageList items={this.state.images} onClick={this.openModal} />}    
+                {isImages && <Button text="Load more..." onClick={this.loadMore} />}
                 {loading && <Dna
                                 visible={true}
                                 height="80"
@@ -102,9 +105,6 @@ export default class ImageGallery extends Component {
                                 ariaLabel="dna-loading"
                                 wrapperStyle={{}}
                                 wrapperClass="dna-wrapper" />}
-                {error && <p className="notification">Try later, please.</p>}
-                {images && <ImageList items={this.state.images} onClick={this.openModal} />}    
-                {isImages && <Button text="Load more..." onClick={this.loadMore} />}
                 {showModal && <Modal onClose={this.closeModal} content={this.state.contentModal} />}
             </div>
         )
