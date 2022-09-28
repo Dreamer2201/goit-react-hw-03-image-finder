@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import { toast } from 'react-toastify';
-import ImageList from '../ImageList/ImageList';
+import ImageList from '../shared/ImageList/ImageList';
 import fetchRequest from 'Fetch/FetchApi';
 import { Dna } from  'react-loader-spinner'
-import Modal from '../Modal/Modal';
-import Button from '../Button/Button';
+import Modal from '../shared/Modal/Modal';
+import Button from '../shared/Button/Button';
 
 export default class ImageGallery extends Component {
     state = {
